@@ -6,6 +6,8 @@ Card Rescue is a Spring Boot backend application for securely reporting, trackin
 
 The system allows users to report lost cards and found cards. When the card type, bank name, and last four digits match, the system creates a match, updates card statuses, and sends email notifications to both users.
 
+---
+
 ## Tech Stack
 
 - Java 17
@@ -17,6 +19,9 @@ The system allows users to report lost cards and found cards. When the card type
 - PostgreSQL
 - Flyway Migration
 - Spring Mail / Gmail SMTP
+- Docker / Docker Compose
+
+---
 
 ## Features
 
@@ -72,6 +77,14 @@ The system allows users to report lost cards and found cards. When the card type
 - PostgreSQL database
 - Flyway versioned migrations
 
+### Docker Support
+
+- Spring Boot application container
+- PostgreSQL container
+- Docker Compose setup
+
+---
+
 ## API Endpoints
 
 ### Auth
@@ -109,6 +122,8 @@ PUT /admin/users/{id}
 DELETE /admin/users/{id}
 ```
 
+---
+
 ## Authentication Header
 
 For protected APIs, pass the JWT token in the request header:
@@ -116,6 +131,8 @@ For protected APIs, pass the JWT token in the request header:
 ```http
 Authorization: Bearer <token>
 ```
+
+---
 
 ## Sample Request Bodies
 
@@ -158,33 +175,51 @@ Authorization: Bearer <token>
 }
 ```
 
+---
+
 ## Environment Variables
 
-Do not store real email credentials in `application.properties` before pushing to Git.
+Do not store real email credentials or database passwords in Git.
 
-Use environment variables:
+`application.properties` supports environment variables:
 
 ```properties
-spring.mail.username=${MAIL_USERNAME}
-spring.mail.password=${MAIL_PASSWORD}
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/card_rescue_db}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:root}
+
+spring.mail.username=${MAIL_USERNAME:}
+spring.mail.password=${MAIL_PASSWORD:}
 ```
 
-Required local environment variables:
+Required for email notification:
 
 ```text
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_gmail_app_password
 ```
 
+Optional for database:
+
+```text
+DB_URL=jdbc:postgresql://localhost:5432/card_rescue_db
+DB_USERNAME=postgres
+DB_PASSWORD=root
+```
+
+---
+
 ## Database Configuration
 
-Example PostgreSQL configuration:
+Default local PostgreSQL configuration:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/card_rescue_db
 spring.datasource.username=postgres
-spring.datasource.password=your_database_password
+spring.datasource.password=root
 ```
+
+---
 
 ## Flyway Migration
 
@@ -201,7 +236,21 @@ V1__init_schema.sql
 V2__add_user_role.sql
 ```
 
-## Run Project
+---
+
+## Run Locally
+
+Make sure PostgreSQL is running locally.
+
+Set environment variables if needed:
+
+```cmd
+set DB_PASSWORD=root
+set MAIL_USERNAME=your_email@gmail.com
+set MAIL_PASSWORD=your_gmail_app_password
+```
+
+Run:
 
 ```bash
 mvn spring-boot:run
@@ -213,13 +262,108 @@ Application runs on:
 http://localhost:8080
 ```
 
+If port 8080 is already in use, set a different port:
+
+```properties
+server.port=${SERVER_PORT:8080}
+```
+
+Example:
+
+```cmd
+set SERVER_PORT=8081
+mvn spring-boot:run
+```
+
+---
+
+## Run with Docker
+
+Start Docker Desktop first.
+
+Run:
+
+```bash
+docker compose up --build
+```
+
+Application runs on:
+
+```text
+http://localhost:8080
+```
+
+PostgreSQL container:
+
+```text
+Database: card_rescue_db
+Username: postgres
+Password: root
+Port: 5432
+```
+
+For email notification in Docker, set these environment variables before running Docker:
+
+```text
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_gmail_app_password
+```
+
+Stop Docker containers:
+
+```bash
+docker compose down
+```
+
+---
+
+## Docker Services
+
+`docker-compose.yml` includes:
+
+```text
+app       -> Spring Boot backend
+postgres  -> PostgreSQL 16 database
+```
+
+Docker app uses:
+
+```text
+DB_URL=jdbc:postgresql://postgres:5432/card_rescue_db
+DB_USERNAME=postgres
+DB_PASSWORD=root
+```
+
+---
+
 ## Security Notes
 
 - Passwords are stored using BCrypt hashing.
 - JWT is required for protected APIs.
 - Admin APIs are restricted to users with role `ADMIN`.
-- Email app passwords should never be committed to Git.
+- Gmail app passwords should never be committed to Git.
+- Use environment variables for sensitive values.
+
+---
 
 ## Project Status
 
-Backend is completed with authentication, JWT security, role-based admin access, card matching, dashboard APIs, Flyway migration, global exception handling, and email notification.
+Backend is completed with:
+
+- Authentication
+- JWT security
+- Role-based admin access
+- Lost/found card matching
+- Dashboard APIs
+- Flyway migration
+- Global exception handling
+- Email notification
+- Docker setup
+
+---
+
+## GitHub Repository
+
+```text
+https://github.com/Sahilxviii/Card_Rescue_JAVA.git
+```

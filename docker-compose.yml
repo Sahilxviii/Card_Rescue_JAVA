@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: card_rescue_postgres
+    environment:
+      POSTGRES_DB: card_rescue_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - card_rescue_pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: card_rescue_app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/card_rescue_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+volumes:
+  card_rescue_pgdata:

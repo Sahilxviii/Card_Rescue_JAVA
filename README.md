@@ -367,3 +367,21 @@ Backend is completed with:
 ```text
 https://github.com/Sahilxviii/Card_Rescue_JAVA.git
 ```
+
+## Swagger / OpenAPI
+
+Swagger UI is available at:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+OpenAPI JSON is available at:
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+For protected APIs, click **Authorize** in Swagger UI and enter your JWT token.
+
+This project uses Swagger/OpenAPI to document and test REST APIs directly from the browser.
